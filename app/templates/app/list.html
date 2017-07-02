@@ -1,0 +1,20 @@
+<html>
+  <head>
+    <title>List of items extracted</title>
+  </head>
+  <body>
+    {% if not item_list %}
+        Oops! No results
+    {% else %}
+        {% for item in item_list %}
+            <a href={{ item.url }}>{{ item.name }}</a> <br>
+            Specs: <br>
+            <ul>
+            {% for spec in item.spec %}
+              <li>{{spec}}</li>
+            {% endfor %}
+            </ul>
+        {% endfor %}
+    {% endif %}
+  </body>
+</html>
