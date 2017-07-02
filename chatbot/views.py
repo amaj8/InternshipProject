@@ -1,6 +1,12 @@
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-# Create your views here.
+from django.views.generic import TemplateView
+from extract import *
+
+
+class HomeView(TemplateView):
+    template_name = "app/home.html"
+
 
 @csrf_exempt
 def run_script(request):
@@ -8,25 +14,27 @@ def run_script(request):
     action = None
     userInput = None
     chatbotResponse = None
-    request.session.set_expiry(0)
-    # request.POST['userInput'] = []
     if request.method == 'POST':
-        if 'action' and 'parameters' in request.POST:
+        if 'action' in request.POST:
             action = request.POST['action']
-            parameters = request.POST['parameters']
-        else:
-            print "no action"
-        if 'userInput' and 'chatbotResponse' in request.POST:
-            userInput = request.POST['userInput']
-            chatbotResponse = request.POST['chatbotResponse']
-            # request.session['userInput'].append(userInput)
-            # request.session['chatbotResponse'].append(chatbotResponse)
+            if action == "run_script":
+                keys = [ "battery","camera","company","max_battery","max_screen_size","memory",
+                         "min_battery","min_screen_size","network","os", "price_from","price_to","ram","screen_size"]
+                parameters = {}
+                for key in keys:
+                    value = request.POST["parameters[" + key + "]"]
+                    parameters[key]=value.strip()
+                print "parameters: %s" % parameters
         else:
             print "no response"
-        context = {'action': action, 'userInput': userInput, 'chatbotResponse': chatbotResponse}
-    return render(request, "chatbot/display.html", context=context)
+    return render(request, "chatbot/display.html")
 
 
-# def display(request):
-#     context = request.session['context']
-#     return render(request, "chatbot/display.html", context=context)
+def extract(request):
+    #this is just a demo req dictionary.
+    #req is a dictionary which will store all the vars for user requirements from the json dumps
+    #insert code for extraction of the dictionary from the json dump
+    req = {'company':'Lenovo','price_to':'20000','ram':'2','network':'4G'}
+    f = Flip(req)
+    item_list = f.extract()
+    return render(request,'app/list.html',context = {'item_list':item_list})

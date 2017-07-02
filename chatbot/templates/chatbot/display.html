@@ -87,7 +87,7 @@
         text = $speechInput.val(),
 
         data = {'chatbotResponse':spokenResponse, 'action':action,'userInput':text, 'parameters':parameters } ;
-
+        console.log(parameters);
         $("#speech").val("");
       send_data(data);
       respond(spokenResponse);
@@ -197,6 +197,13 @@
     </div>
 </div>
 
-
+<div class="debug">
+    <div class="debug__btn btn">
+      Debug JSON results
+    </div>
+    <div class="debug__content">
+      <textarea id="response" cols="40" rows="20"></textarea>
+    </div>
+</div>
 </body>
 </html>
