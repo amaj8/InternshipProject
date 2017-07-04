@@ -164,6 +164,7 @@ html {
     height: 100px;
     padding: 10px;
     border: 5px solid gray;
+    color: black;
     margin: 0;
     overflow: scroll;
 

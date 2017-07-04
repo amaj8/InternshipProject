@@ -35,6 +35,6 @@ def run_script(request):
                 # request.session['url'] = url
                 # return final_response(request)
                 print "url: %s" % url
-                # return render(request, "chatbot/display.html", context={'url_key': url})
-    return render(request, "chatbot/display.html", {'url_key':url})
+                return render(request, "chatbot/display.html", context={'url_key': url})
+    return render(request, "chatbot/display.html")
 
