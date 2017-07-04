@@ -105,7 +105,7 @@
         var chatbot_text = "";
         var j;
         for (j = 0; j < chatbotreply.length; j++) {
-            chatbot_text += chatbotreply[i] + "<br>";
+            chatbot_text += chatbotreply[j] + "<br>";
         }
         document.getElementById("display-left").innerHTML = chatbot_text;
 
@@ -161,12 +161,14 @@
                                 <div class="header">
                                     <strong class="primary-font">Chatbot</strong>
                                 </div>
-                                <!--<p id="display-left">-->
+                                <p id="display-left">
 
-                                <div id="spokenResponse" class="spoken-response">
+                                <!--<div id="spokenResponse" class="spoken-response">-->
 
-                                        <div class="spoken-response__text"></div>
-                                    </div>
+                                        <!--<div class="spoken-response__text"></div>-->
+
+                                    <!--</div>-->
+
                                 <!--</p>-->
                             </div>
                         </li>
@@ -199,6 +201,12 @@
         </div>
     </div>
 </div>
+  <div id="final">
+      {% if url_key %}
+                  {{url}}
+
+      {% endif %}
+  </div>
 
 <div class="debug">
     <div class="debug__btn btn">

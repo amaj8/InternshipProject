@@ -15,11 +15,10 @@ def final_response(request):
 
 @csrf_exempt
 def run_script(request):
-    context = None
     action = None
     userInput = None
     chatbotResponse = None
-    request.session.flush()
+    url = None
     if request.method == 'POST':
         if 'action' in request.POST:
             action = request.POST['action']
@@ -33,7 +32,9 @@ def run_script(request):
                     parameters[key] = value
                 f = Flip(parameters)
                 url = f.extract()
-                request.session['url'] = url
-                return final_response(request)
-    return render(request, "chatbot/display.html")
+                # request.session['url'] = url
+                # return final_response(request)
+                print "url: %s" % url
+                # return render(request, "chatbot/display.html", context={'url_key': url})
+    return render(request, "chatbot/display.html", {'url_key':url})
 
