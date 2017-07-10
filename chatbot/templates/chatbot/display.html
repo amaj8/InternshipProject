@@ -99,11 +99,15 @@
             url: '{% url 'chatbot:final_response' %}',
             //url: "/final_response/$",
             //contentType: "application/json; charset=utf-8",
-            dataType: "json",
+            dataType: "html",
             data: data,
            success: function(data){
               console.log("Yep!");
               console.log(data);
+              //document.getElementById("url_key").setAttribute("href",data.url_key);
+              document.open();
+              document.write(data);
+              document.close();
             },
 
             error: function() {
