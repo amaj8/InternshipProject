@@ -73,12 +73,18 @@
         data: JSON.stringify({query: text, lang: "en", sessionId: "yaydevdiner"}),
         success: function(data) {
           prepareResponse(data);
+          //window.location.href = 'chatbot/final_response'
+          
+          //document.getElementById("url_key").setAttribute("href",data.url_key);
+          //console.log(data.url_key)
+
         },
         error: function() {
           respond(messageInternalError);
         }
       });
     }
+
     function prepareResponse(val) {
       var debugJSON = JSON.stringify(val, undefined, 2),
         spokenResponse = val.result.speech,
@@ -87,6 +93,25 @@
         text = $speechInput.val(),
 
         data = {'chatbotResponse':spokenResponse, 'action':action,'userInput':text, 'parameters':parameters } ;
+
+        $.ajax({
+            type: "POST",
+            url: '{% url 'chatbot:final_response' %}',
+            //url: "/final_response/$",
+            //contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: data,
+           success: function(data){
+              console.log("Yep!");
+              console.log(data);
+            },
+
+            error: function() {
+              console.log("Nope :(");
+            },
+
+          });
+
         console.log(parameters);
         $("#speech").val("");
       send_data(data);
@@ -109,7 +134,7 @@
         }
         document.getElementById("display-left").innerHTML = chatbot_text;
 
-        <!--console.log(chatbotreply);-->
+        //console.log(chatbotreply);
 
 
     }
@@ -134,6 +159,8 @@
       $("#spokenResponse").addClass("is-active").find(".spoken-response__text").html(val);
     }
   </script>
+
+
     </head>
 <body>
 
@@ -202,10 +229,16 @@
     </div>
 </div>
   <div id="final">
-      {% if url_key %}
-                  {{url_key}}
+  blah1
+  <!--
+      {% if not url_key %}
+        No url_key
+      {% else %}
+                  <a id= 'url_key' href={{url_key}}> Click me!</a>
 
       {% endif %}
+      -->
+      <a id= 'url_key' href={{url_key}}> Click me!</a>
   </div>
 
 <div class="debug">
@@ -216,5 +249,10 @@
       <textarea id="response" cols="40" rows="20"></textarea>
     </div>
 </div>
+<!--
+<div>
+<pre> {% filter force_escape %} {% debug %} {% endfilter %} </pre>
+</div>
+-->
 </body>
 </html>
