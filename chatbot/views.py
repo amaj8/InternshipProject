@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect, reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from django.http.response import JsonResponse
-from django.template.loader import render_to_string
 from extract import *
 
 
@@ -30,7 +29,7 @@ def final_response(request):
                     value = request.POST["parameters[" + key + "]"]
                     parameters[key] = value
                 f = Flip(parameters)
-                url = f.extract()
+                item_list = f.extract()
                 #request.session['url'] = url
                 #return final_response(request)
                 print "url: %s" % url
@@ -41,8 +40,8 @@ def final_response(request):
                 #return render(request,'chatbot/test.html')
                 #return JsonResponse({'url_key':url})
 
-                return render(request, "chatbot/finalresponse.html",context)
-                #return render(request,"chatbot/list.html",context = {'item_list':item_list})
+                #return render(request, "chatbot/finalresponse.html",context)
+                return render(request,"chatbot/list.html",context = {'item_list':item_list})
 
     
         

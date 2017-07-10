@@ -207,8 +207,9 @@ class Flip:
 		filt = self.create_filters()																#filt now stores the list of params to be included in the url
 		payload = {'p%5B%5D':filt, 'q':'phones'}												#q-> query string, p handles the filters
 		url = url2 + "&" + urllib.urlencode(payload, True)									#urllib.parse.urlencode appends the params properly to the url and don't forget the & after url2
-		# print("url:", url)
-		return url
+		print url
+		#print("url:", url)
+		#return url
 
 		#Running Chrome headless using xvfb and pyvirtualdisplay
 		display = Display(visible=0, size=(800, 600))
