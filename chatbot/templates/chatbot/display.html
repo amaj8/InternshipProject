@@ -15,22 +15,21 @@
       $recBtn,
       recognition,
       messageInternalError = "Oh no, there has been an internal server error",
-      URL = "{% url 'chatbot:run_script' %}";
-        var chatbotreply = new Array();
-        var userInputArray = new Array();
+      URL = "{% url 'chatbot:run_script' %}" ,
+      chatbotreply = new Array() ,
+      userInputArray = new Array(),
+      globalParameters = new Object();
 
     $(document).ready(function() {
       $speechInput = $("#speech");
-      $recBtn = $("#rec");
       $speechInput.keypress(function(event) {
         if (event.which == 13) {
           event.preventDefault();
           send();
         }
       });
-      $recBtn.on("click", function(event) {
-        switchRecognition();
-      });
+
+
       $(".debug__btn").on("click", function() {
         $(this).next().toggleClass("is-active");
         return false;
@@ -55,10 +54,12 @@
       };
 
     }
+
     function setInput(text) {
       $speechInput.val(text);
       send();
     }
+
     function send() {
       var text = $speechInput.val();
 
@@ -73,11 +74,6 @@
         data: JSON.stringify({query: text, lang: "en", sessionId: "yaydevdiner"}),
         success: function(data) {
           prepareResponse(data);
-          //window.location.href = 'chatbot/final_response'
-          
-          //document.getElementById("url_key").setAttribute("href",data.url_key);
-          //console.log(data.url_key)
-
         },
         error: function() {
           respond(messageInternalError);
@@ -90,10 +86,28 @@
         spokenResponse = val.result.speech,
         action = val.result.action,
         parameters = val.result.parameters,
-        text = $speechInput.val(),
+        text = $speechInput.val();
 
-        data = {'chatbotResponse':spokenResponse, 'action':action,'userInput':text, 'parameters':parameters } ;
-
+        for(var key in parameters){
+            if(globalParameters.hasOwnProperty(key)){
+                if (globalParameters[key] != ""){
+                    if(parameters[key] != "" ){
+                        globalParameters[key] = parameters[key];
+                    }
+                    else{
+                        globalParameters[key] = globalParameters[key];
+                    }
+                }
+                else{
+                    globalParameters[key] = parameters[key];
+                }
+            }
+            else{
+                globalParameters[key] = parameters[key];
+            }
+        }
+        console.log("parameters: ", globalParameters);
+        var data = {'chatbotResponse':spokenResponse, 'action':action,'userInput':text, 'parameters':globalParameters } ;
         $.ajax({
             type: "POST",
             url: '{% url 'chatbot:final_response' %}',
@@ -115,8 +129,6 @@
             },
 
           });
-
-        console.log(parameters);
         $("#speech").val("");
       send_data(data);
       respond(spokenResponse);
@@ -139,8 +151,6 @@
         document.getElementById("display-left").innerHTML = chatbot_text;
 
         //console.log(chatbotreply);
-
-
     }
 
     function send_data(data){
@@ -175,13 +185,6 @@
         <div class="col-md-10">
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <!--<span class="glyphicon glyphicon-comment"></span> Chat-->
-                    <!--<div class="btn-group pull-right">-->
-                        <!--<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">-->
-                            <!--<span class="glyphicon glyphicon-chevron-down"></span>-->
-                        <!--</button>-->
-
-                    <!--</div>-->
                 </div>
                 <div class="panel-body">
                     <ul class="chat">
@@ -192,15 +195,7 @@
                                 <div class="header">
                                     <strong class="primary-font">Chatbot</strong>
                                 </div>
-                                <p id="display-left">
-
-                                <!--<div id="spokenResponse" class="spoken-response">-->
-
-                                        <!--<div class="spoken-response__text"></div>-->
-
-                                    <!--</div>-->
-
-                                <!--</p>-->
+                                <p id="display-left"></p>
                             </div>
                         </li>
 
@@ -211,9 +206,7 @@
                                 <div class="header">
                                     <strong class="pull-right primary-font">{{request.user.username}}</strong>
                                 </div>
-                                <p id="display-right">
-
-                                </p>
+                                <p id="display-right"></p>
                             </div>
                         </li>
 
@@ -232,18 +225,6 @@
         </div>
     </div>
 </div>
-  <div id="final">
-  blah1
-  <!--
-      {% if not url_key %}
-        No url_key
-      {% else %}
-                  <a id= 'url_key' href={{url_key}}> Click me!</a>
-
-      {% endif %}
-      -->
-      <a id= 'url_key' href={{url_key}}> Click me!</a>
-  </div>
 
 <div class="debug">
     <div class="debug__btn btn">

@@ -6,8 +6,12 @@ from django.template.loader import render_to_string
 from extract import *
 
 
+params = {}
+
+
 class HomeView(TemplateView):
     template_name = "app/home.html"
+
 
 @csrf_exempt
 def final_response(request):
@@ -26,13 +30,23 @@ def final_response(request):
                          "min_battery", "min_screen_size", "network", "os", "price_from", "price_to", "ram",
                         "screen_size"]
                 parameters = {}
+                # global params
+                # for key in keys:
+                #     value = request.POST["parameters[" + key + "]"]
+                #     try:
+                #         a = params[key]
+                #     except KeyError:
+                #         params[key] = value
+                # print params
                 for key in keys:
                     value = request.POST["parameters[" + key + "]"]
                     parameters[key] = value
+                print "params: %s" % parameters
                 f = Flip(parameters)
+                # f = Flip(params)
                 url = f.extract()
-                #request.session['url'] = url
-                #return final_response(request)
+                # request.session['url'] = url
+                # return final_response(request)
                 print "url: %s" % url
                 context={'url_key': url}
                 print context
