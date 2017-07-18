@@ -1,0 +1,301 @@
+{% load staticfiles %}
+<html>
+<head>
+  <title>Chatbot</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+     <link rel="stylesheet" type="text/css" href="{% static 'css/style1.css' %}"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  <script type="text/javascript">
+
+    var accessToken = "b44e27ee73964ceaac278ffdd0d7f32d",
+      baseUrl = "https://api.api.ai/v1/",
+      $speechInput,
+      $recBtn,
+      recognition,
+      messageInternalError = "Oh no, there has been an internal server error",
+      URL = "{% url 'chatbot:run_script' %}" ,
+      chatbotreply = new Array() ,
+      userInputArray = new Array(),
+      globalParameters = new Object();
+
+    $(document).ready(function() {
+      $speechInput = $("#speech");
+      $speechInput.keypress(function(event) {
+        if (event.which == 13) {
+          event.preventDefault();
+          send();
+        }
+      });
+
+
+      $(".debug__btn").on("click", function() {
+        $(this).next().toggleClass("is-active");
+        return false;
+      });
+    }); // end ready
+
+    function startRecognition() {
+
+      recognition.onstart = function(event) {
+        respond(messageRecording);
+        updateRec();
+      };
+      recognition.onresult = function(event) {
+        recognition.onend = null;
+
+        var text = "";
+          for (var i = event.resultIndex; i < event.results.length; ++i) {
+            text += event.results[i][0].transcript;
+          }
+          setInput(text);
+        stopRecognition();
+      };
+
+    }
+
+    function setInput(text) {
+      $speechInput.val(text);
+      send();
+    }
+
+    function send() {
+      var text = $speechInput.val();
+
+      $.ajax({
+        type: "POST",
+        url: baseUrl + "query",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        headers: {
+          "Authorization": "Bearer " + accessToken
+        },
+        data: JSON.stringify({query: text, lang: "en", sessionId: "yaydevdiner"}),
+        success: function(data) {
+          prepareResponse(data);
+        },
+        error: function() {
+          respond(messageInternalError);
+        }
+      });
+    }
+
+    function prepareResponse(val) {
+      var debugJSON = JSON.stringify(val, undefined, 2),
+        spokenResponse = val.result.speech,
+        action = val.result.action,
+        parameters = val.result.parameters,
+        text = $speechInput.val();
+
+        for(var key in parameters){
+          if(parameters[key] != "" ){
+            globalParameters[key] = parameters[key];
+          }
+                      
+        }
+        console.log("parameters: ", globalParameters);
+        var data = {'chatbotResponse':spokenResponse, 'action':action,'userInput':text, 'parameters':globalParameters } ;
+        $.ajax({
+            type: "POST",
+            url: '{% url 'chatbot:final_response' %}',
+            //url: "/final_response/$",
+            //contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: data,
+           success: function(data){
+              console.log("Yep!");
+              console.log(data);
+              //document.getElementById("url_key").setAttribute("href",data.url_key);
+              document.open();
+              document.write(data);
+              document.close();
+            },
+
+            error: function() {
+              console.log("Nope :(");
+            },
+
+          });
+        $("#speech").val("");
+        send_data(data);
+        respond(spokenResponse);
+        debugRespond(debugJSON);
+        chatbotreply.push(spokenResponse);
+        userInputArray.push(text);
+
+        chat = document.getElementById('main')
+
+        //user
+        var li = document.createElement('li')
+        li.setAttribute('class','right clearfix')
+        var span = document.createElement('span')
+        span.setAttribute('class','chat-img pull-right')
+        var img = document.createElement('img')
+        img.src = "http://placehold.it/50/FA6F57/fff&amp;text=ME"
+        img.setAttribute('alt','User Avatar')
+        img.setAttribute('class','img-circle')
+        var div = document.createElement('div')
+        div.setAttribute('class',"pull-right chat-body clearfix")
+        div.id = 'user'
+        var div2 = document.createElement('div')
+        div2.setAttribute('class','header')
+        var strong = document.createElement('strong')
+        strong.setAttribute('class',"primary-font")
+        {% if request.user.username %}
+        strong.innerHTML = "{{request.user.username}}"
+        {% else %}
+        strong.innerHTML = "User"
+        {% endif %}
+        var p = document.createElement('p')
+        p.innerHTML = text
+
+        span.appendChild(img)
+        div2.appendChild(strong)
+        div.appendChild(div2)
+        div.appendChild(p)
+        li.appendChild(span)
+        li.appendChild(div)
+
+        chat.appendChild(li)
+
+        
+        //chatbot
+        var ch_li = document.createElement('li')
+        ch_li.setAttribute('class','left clearfix')
+        var ch_span = document.createElement('span')
+        ch_span.setAttribute('class','chat-img pull-left')
+        var ch_img = document.createElement('img')
+        ch_img.src = "http://placehold.it/50/55C1E7/fff&amp;text=U"
+        ch_img.setAttribute('alt','Chatbot Avatar')
+        ch_img.setAttribute('class','img-circle')
+        var ch_div = document.createElement('div')
+        ch_div.setAttribute('class',"chat-body clearfix")
+        ch_div.id = 'chatbot'
+        var ch_div2 = document.createElement('div')
+        ch_div2.setAttribute('class','header')
+        var ch_strong = document.createElement('strong')
+        ch_strong.setAttribute('class',"primary-font")
+        ch_strong.innerHTML = 'Chatbot'
+        var ch_p = document.createElement('p')
+        ch_p.innerHTML = spokenResponse
+
+        ch_span.appendChild(ch_img)
+        ch_div2.appendChild(ch_strong)
+        ch_div.appendChild(ch_div2)
+        ch_div.appendChild(ch_p)
+        ch_li.appendChild(ch_span)
+        ch_li.appendChild(ch_div)
+
+        chat.appendChild(ch_li)
+
+        var mainDiv = document.getElementById('mainDiv')
+        
+        mainDiv.scrollTop = mainDiv.scrollHeight
+
+        /*
+        
+        user_head = document.getElementById("user")
+        var p = document.createElement('p')
+        p.id = 'display-left'
+        p.innerHTML = text
+        user_head.appendChild(p)
+
+        chatbot_head = document.getElementById("user")
+        p = document.createElement('p')
+        p.id = 'display-right'
+        p.innerHTML = spokenResponse
+        chatbot_head.appendChild(p)
+        */
+        /*
+        var user_text = "";
+        var i;
+        for (i = 0; i < userInputArray.length; i++) {
+            user_text += userInputArray[i] + "<br>";
+        }
+        */
+        //document.getElementById("display-right").innerHTML = user_text;
+        
+
+        /*
+        var chatbot_text = "";
+        var j;
+        for (j = 0; j < chatbotreply.length; j++) {
+            chatbot_text += chatbotreply[j] + "<br>";
+        }
+        */
+
+        //document.getElementById("display-left").innerHTML = chatbot_text;
+
+        //console.log(chatbotreply);
+    }
+
+    function send_data(data){
+       $.post(URL,data,function(response){
+
+        if(response=='success')
+            {console.log('success');}
+        else{console.log('error');}
+       });
+    }
+
+    function debugRespond(val) {
+      $("#response").text(val);
+    }
+    function respond(val) {
+      if (val == "") {
+        val = messageSorry;
+      }
+
+      $("#spokenResponse").addClass("is-active").find(".spoken-response__text").html(val);
+    }
+  </script>
+
+
+    </head>
+<body>
+
+  <link href="https://fonts.googleapis.com/css?family=Titillium+Web:200" rel="stylesheet" type="text/css">
+
+<div  class="container">
+    <div  class="row">
+        <div class="col-md-10">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                </div>
+                <div id='mainDiv' class="panel-body">
+                    <ul id = 'main' class="chat">
+
+                        
+
+                    </ul>
+                </div>
+                <div class="panel-footer">
+                    <div class="input-group">
+                        <input id="speech" type="text" class="form-control input-sm" placeholder="Type your message here...">
+                        <span class="input-group-btn">
+                            <button class="btn btn-warning btn-sm" id="btn-chat">
+                                Send</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="debug">
+    <div class="debug__btn btn">
+      Debug JSON results
+    </div>
+    <div class="debug__content">
+      <textarea id="response" cols="40" rows="20"></textarea>
+    </div>
+</div>
+<!--
+<div>
+<pre> {% filter force_escape %} {% debug %} {% endfilter %} </pre>
+</div>
+-->
+</body>
+</html>
