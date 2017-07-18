@@ -3,12 +3,11 @@
 <head>
   <title>Chatbot</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-     <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}"/>
+     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
   <script type="text/javascript">
-
     var accessToken = "b44e27ee73964ceaac278ffdd0d7f32d",
       baseUrl = "https://api.api.ai/v1/",
       $speechInput,
@@ -19,7 +18,6 @@
       chatbotreply = new Array() ,
       userInputArray = new Array(),
       globalParameters = new Object();
-
     $(document).ready(function() {
       $speechInput = $("#speech");
       $speechInput.keypress(function(event) {
@@ -28,23 +26,18 @@
           send();
         }
       });
-
-
       $(".debug__btn").on("click", function() {
         $(this).next().toggleClass("is-active");
         return false;
       });
     }); // end ready
-
     function startRecognition() {
-
       recognition.onstart = function(event) {
         respond(messageRecording);
         updateRec();
       };
       recognition.onresult = function(event) {
         recognition.onend = null;
-
         var text = "";
           for (var i = event.resultIndex; i < event.results.length; ++i) {
             text += event.results[i][0].transcript;
@@ -52,16 +45,16 @@
           setInput(text);
         stopRecognition();
       };
-
     }
-
     function setInput(text) {
       $speechInput.val(text);
       send();
     }
-
     function send() {
       var text = $speechInput.val();
+
+      printmsg("user",text);
+      console.log(text);
 
       $.ajax({
         type: "POST",
@@ -80,14 +73,15 @@
         }
       });
     }
-
     function prepareResponse(val) {
       var debugJSON = JSON.stringify(val, undefined, 2),
         spokenResponse = val.result.speech,
+
+        printmsg("chatbot",spokenResponse);
+
         action = val.result.action,
         parameters = val.result.parameters,
         text = $speechInput.val();
-
         for(var key in parameters){
             if(globalParameters.hasOwnProperty(key)){
                 if (globalParameters[key] != ""){
@@ -123,45 +117,66 @@
               document.write(data);
               document.close();
             },
-
             error: function() {
               console.log("Nope :(");
             },
-
           });
         $("#speech").val("");
       send_data(data);
       respond(spokenResponse);
       debugRespond(debugJSON);
-      chatbotreply.push(spokenResponse);
-        userInputArray.push(text);
 
-        var user_text = "";
-        var i;
-        for (i = 0; i < userInputArray.length; i++) {
-            user_text += userInputArray[i] + "<br>";
+        <!--chatbotreply.push(spokenResponse);-->
+        <!--userInputArray.push(text);-->
+        <!--var user_text = "";-->
+        <!--var i;-->
+        <!--for (i = 0; i < userInputArray.length; i++) {-->
+            <!--user_text += userInputArray[i] + "<br>";-->
+        <!--}-->
+        <!--document.getElementById("display-right").innerHTML = user_text;-->
+        <!--var chatbot_text = "";-->
+        <!--var j;-->
+        <!--for (j = 0; j < chatbotreply.length; j++) {-->
+            <!--chatbot_text += chatbotreply[j] + "<br>";-->
+        <!--}-->
+        <!--document.getElementById("display-left").innerHTML = chatbot_text;-->
+        <!--//console.log(chatbotreply);-->
+    }
+
+    function printmsg(who, msg){
+        var control = "",
+        if(who == "user"){
+             control =
+                '<li class="right clearfix">'+
+                '<span class="chat-img pull-right">'+
+                '<img src="http://placehold.it/50/FA6F57/fff&amp;text=ME" alt="User Avatar" class="img-circle">'+
+                '</span>'+
+                '<div class="chat-body clearfix">'+
+                '<p>' + msg + '</p>'+
+                '</div>'+
+                '</li>';
         }
-        document.getElementById("display-right").innerHTML = user_text;
-
-        var chatbot_text = "";
-        var j;
-        for (j = 0; j < chatbotreply.length; j++) {
-            chatbot_text += chatbotreply[j] + "<br>";
+        else{
+            control =
+                '<li class="left clearfix">'+
+                '<span class="chat-img pull-left">'+
+                '<img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt="User Avatar" class="img-circle">'+
+                '</span>'+
+                '<div class="chat-body clearfix">'+
+                '<p>' + msg + '</p>'+
+                '</div>'+
+                '</li>';
         }
-        document.getElementById("display-left").innerHTML = chatbot_text;
-
-        //console.log(chatbotreply);
+        $(".chat").append(control);
     }
 
     function send_data(data){
        $.post(URL,data,function(response){
-
         if(response=='success')
             {console.log('success');}
         else{console.log('error');}
        });
     }
-
     function debugRespond(val) {
       $("#response").text(val);
     }
@@ -169,7 +184,6 @@
       if (val == "") {
         val = messageSorry;
       }
-
       $("#spokenResponse").addClass("is-active").find(".spoken-response__text").html(val);
     }
   </script>
@@ -188,27 +202,27 @@
                 </div>
                 <div class="panel-body">
                     <ul class="chat">
-                        <li class="left clearfix"><span class="chat-img pull-left">
-                            <img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt="User Avatar" class="img-circle">
-                        </span>
-                            <div class="chat-body clearfix">
-                                <div class="header">
-                                    <strong class="primary-font">Chatbot</strong>
-                                </div>
-                                <p id="display-left"></p>
-                            </div>
-                        </li>
+                        <!--<li class="left clearfix"><span class="chat-img pull-left">-->
+                            <!--<img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt="User Avatar" class="img-circle">-->
+                        <!--</span>-->
+                            <!--<div class="chat-body clearfix">-->
+                                <!--<div class="header">-->
+                                    <!--<strong class="primary-font">Chatbot</strong>-->
+                                <!--</div>-->
+                                <!--<p id="display-left"></p>-->
+                            <!--</div>-->
+                        <!--</li>-->
 
-                        <li class="right clearfix"><span class="chat-img pull-right">
-                            <img src="http://placehold.it/50/FA6F57/fff&amp;text=ME" alt="User Avatar" class="img-circle">
-                        </span>
-                            <div class="chat-body clearfix">
-                                <div class="header">
-                                    <strong class="pull-right primary-font">{{request.user.username}}</strong>
-                                </div>
-                                <p id="display-right"></p>
-                            </div>
-                        </li>
+                        <!--<li class="right clearfix"><span class="chat-img pull-right">-->
+                            <!--<img src="http://placehold.it/50/FA6F57/fff&amp;text=ME" alt="User Avatar" class="img-circle">-->
+                        <!--</span>-->
+                            <!--<div class="chat-body clearfix">-->
+                                <!--<div class="header">-->
+                                    <!--<strong class="pull-right primary-font">{{request.user.username}}</strong>-->
+                                <!--</div>-->
+                                <!--<p id="display-right"></p>-->
+                            <!--</div>-->
+                        <!--</li>-->
 
                     </ul>
                 </div>
@@ -226,14 +240,14 @@
     </div>
 </div>
 
-<div class="debug">
-    <div class="debug__btn btn">
-      Debug JSON results
-    </div>
-    <div class="debug__content">
-      <textarea id="response" cols="40" rows="20"></textarea>
-    </div>
-</div>
+<!--<div class="debug">-->
+    <!--<div class="debug__btn btn">-->
+      <!--Debug JSON results-->
+    <!--</div>-->
+    <!--<div class="debug__content">-->
+      <!--<textarea id="response" cols="40" rows="20"></textarea>-->
+    <!--</div>-->
+<!--</div>-->
 <!--
 <div>
 <pre> {% filter force_escape %} {% debug %} {% endfilter %} </pre>
