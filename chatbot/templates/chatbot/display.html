@@ -1,0 +1,243 @@
+{% load staticfiles %}
+<html>
+<head>
+  <title>Chatbot</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+     <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  <script type="text/javascript">
+
+    var accessToken = "b44e27ee73964ceaac278ffdd0d7f32d",
+      baseUrl = "https://api.api.ai/v1/",
+      $speechInput,
+      $recBtn,
+      recognition,
+      messageInternalError = "Oh no, there has been an internal server error",
+      URL = "{% url 'chatbot:run_script' %}" ,
+      chatbotreply = new Array() ,
+      userInputArray = new Array(),
+      globalParameters = new Object();
+
+    $(document).ready(function() {
+      $speechInput = $("#speech");
+      $speechInput.keypress(function(event) {
+        if (event.which == 13) {
+          event.preventDefault();
+          send();
+        }
+      });
+
+
+      $(".debug__btn").on("click", function() {
+        $(this).next().toggleClass("is-active");
+        return false;
+      });
+    }); // end ready
+
+    function startRecognition() {
+
+      recognition.onstart = function(event) {
+        respond(messageRecording);
+        updateRec();
+      };
+      recognition.onresult = function(event) {
+        recognition.onend = null;
+
+        var text = "";
+          for (var i = event.resultIndex; i < event.results.length; ++i) {
+            text += event.results[i][0].transcript;
+          }
+          setInput(text);
+        stopRecognition();
+      };
+
+    }
+
+    function setInput(text) {
+      $speechInput.val(text);
+      send();
+    }
+
+    function send() {
+      var text = $speechInput.val();
+
+      $.ajax({
+        type: "POST",
+        url: baseUrl + "query",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        headers: {
+          "Authorization": "Bearer " + accessToken
+        },
+        data: JSON.stringify({query: text, lang: "en", sessionId: "yaydevdiner"}),
+        success: function(data) {
+          prepareResponse(data);
+        },
+        error: function() {
+          respond(messageInternalError);
+        }
+      });
+    }
+
+    function prepareResponse(val) {
+      var debugJSON = JSON.stringify(val, undefined, 2),
+        spokenResponse = val.result.speech,
+        action = val.result.action,
+        parameters = val.result.parameters,
+        text = $speechInput.val();
+
+        for(var key in parameters){
+            if(globalParameters.hasOwnProperty(key)){
+                if (globalParameters[key] != ""){
+                    if(parameters[key] != "" ){
+                        globalParameters[key] = parameters[key];
+                    }
+                    else{
+                        globalParameters[key] = globalParameters[key];
+                    }
+                }
+                else{
+                    globalParameters[key] = parameters[key];
+                }
+            }
+            else{
+                globalParameters[key] = parameters[key];
+            }
+        }
+        console.log("parameters: ", globalParameters);
+        var data = {'chatbotResponse':spokenResponse, 'action':action,'userInput':text, 'parameters':globalParameters } ;
+        $.ajax({
+            type: "POST",
+            url: '{% url 'chatbot:final_response' %}',
+            //url: "/final_response/$",
+            //contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: data,
+           success: function(data){
+              console.log("Yep!");
+              console.log(data);
+              //document.getElementById("url_key").setAttribute("href",data.url_key);
+              document.open();
+              document.write(data);
+              document.close();
+            },
+
+            error: function() {
+              console.log("Nope :(");
+            },
+
+          });
+        $("#speech").val("");
+      send_data(data);
+      respond(spokenResponse);
+      debugRespond(debugJSON);
+      chatbotreply.push(spokenResponse);
+        userInputArray.push(text);
+
+        var user_text = "";
+        var i;
+        for (i = 0; i < userInputArray.length; i++) {
+            user_text += userInputArray[i] + "<br>";
+        }
+        document.getElementById("display-right").innerHTML = user_text;
+
+        var chatbot_text = "";
+        var j;
+        for (j = 0; j < chatbotreply.length; j++) {
+            chatbot_text += chatbotreply[j] + "<br>";
+        }
+        document.getElementById("display-left").innerHTML = chatbot_text;
+
+        //console.log(chatbotreply);
+    }
+
+    function send_data(data){
+       $.post(URL,data,function(response){
+
+        if(response=='success')
+            {console.log('success');}
+        else{console.log('error');}
+       });
+    }
+
+    function debugRespond(val) {
+      $("#response").text(val);
+    }
+    function respond(val) {
+      if (val == "") {
+        val = messageSorry;
+      }
+
+      $("#spokenResponse").addClass("is-active").find(".spoken-response__text").html(val);
+    }
+  </script>
+
+
+    </head>
+<body>
+
+  <link href="https://fonts.googleapis.com/css?family=Titillium+Web:200" rel="stylesheet" type="text/css">
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-10">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                </div>
+                <div class="panel-body">
+                    <ul class="chat">
+                        <li class="left clearfix"><span class="chat-img pull-left">
+                            <img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt="User Avatar" class="img-circle">
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">Chatbot</strong>
+                                </div>
+                                <p id="display-left"></p>
+                            </div>
+                        </li>
+
+                        <li class="right clearfix"><span class="chat-img pull-right">
+                            <img src="http://placehold.it/50/FA6F57/fff&amp;text=ME" alt="User Avatar" class="img-circle">
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="pull-right primary-font">{{request.user.username}}</strong>
+                                </div>
+                                <p id="display-right"></p>
+                            </div>
+                        </li>
+
+                    </ul>
+                </div>
+                <div class="panel-footer">
+                    <div class="input-group">
+                        <input id="speech" type="text" class="form-control input-sm" placeholder="Type your message here...">
+                        <span class="input-group-btn">
+                            <button class="btn btn-warning btn-sm" id="btn-chat">
+                                Send</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="debug">
+    <div class="debug__btn btn">
+      Debug JSON results
+    </div>
+    <div class="debug__content">
+      <textarea id="response" cols="40" rows="20"></textarea>
+    </div>
+</div>
+<!--
+<div>
+<pre> {% filter force_escape %} {% debug %} {% endfilter %} </pre>
+</div>
+-->
+</body>
+</html>
