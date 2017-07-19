@@ -1,0 +1,12 @@
+beautifulsoup4==4.6.0
+bs4==0.0.1
+dj-database-url==0.4.2
+Django==1.10.7
+EasyProcess==0.2.3
+gunicorn==19.7.1
+html5lib==0.999999999
+PyVirtualDisplay==0.2.1
+selenium==3.4.3
+six==1.10.0
+webencodings==0.5.1
+whitenoise==3.3.0

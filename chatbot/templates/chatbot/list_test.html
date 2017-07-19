@@ -1,0 +1,34 @@
+<html>
+  <head>
+    <title>List</title>
+    <!--For bootstrap-->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <div class='top' style="margin-left: 200px;">
+    {% if not item_list %}
+        Oops! No results
+    {% else %}
+        {% for item in item_list %}
+            <a href={{ item.url }}>
+            <img src='{{ item.img }}' class='img-thumbnail'>
+            <!--<div class='specs' style="margin-left: 50px;">-->
+              {{item.name}}
+             
+              <br>
+              <ul>
+              {% for spec in item.spec %}
+                <li>{{spec}}</li>
+              {% endfor %}
+              </ul>
+        {% endfor %}
+            <!--</div>-->
+            </a>
+    {% endif %}
+    </div>
+  </body>
+</html>
