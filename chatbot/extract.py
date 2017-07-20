@@ -3,13 +3,6 @@ from pyvirtualdisplay import Display
 from selenium import webdriver
 from bs4 import BeautifulSoup as bs
 import html5lib
-"""
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.by import By
-"""
 
 #filter strings to be used in Flipkart's url
 
@@ -143,29 +136,6 @@ class Flip:
 		except (KeyError,ValueError):
 			pass
 
-		"""	
-
-		#Fixing battery capacities
-		try:
-			bat = self.req['battery']
-			bat = float(bat)
-			if bat < 1000:
-				bat = "Less+than+1000+mAh"
-			elif 1000 <= bat <= 1999:
-				bat = "1000+-+1999 mAh"
-			elif 2000 <= bat <= 2999:
-				bat = "2000+-+2999 mAh"
-			elif 3000 <= bat <= 3999:
-				bat = "3000+-+3999 mAh"
-			elif 4000 <= bat <= 4999:
-				bat = "4000+-+4999 mAh"
-			elif bat >= 5000:
-				bat = "5000+mAh+&+Above"
-
-			self.req['battery'] = bat
-		except (KeyError,ValueError):
-			pass
-		"""
 
 		#Fixing min battery capacities
 		try:
@@ -208,36 +178,6 @@ class Flip:
 			self.req['max_battery'] = bat
 		except (KeyError,ValueError):
 			pass
-
-
-		"""
-		#Fixing camera
-		try:
-			camera = self.req['camera']
-			camera = float(camera)
-			if camera < 2:
-				camera = "Below%2B2%2BMP"
-			elif 2 <= camera <= 2.9:
-				camera = "2%2B-%2B2.9%2BMP"
-			elif 3 <= camera <= 4.9:
-				camera = "3%2B-%2B4.9%2BMP"
-			elif 5 <= camera <= 7.9:
-				camera = "5%2B-%2B7.9%2BMP"
-			elif 8 <= camera <= 11.9:
-				camera = "8%2B-%2B11.9%2BMP"
-			elif 12 <= camera <= 12.9:
-				camera = "12%2B-%2B12.9%2BMP"
-			elif 13 <= camera <= 15.9:
-				camera = "13%2B-%2B15.9%2BMP"
-			elif 16 <= camera <= 20.9:
-				camera = "16%2B-%2B20.9%2BMP"
-			elif camera >= 21:
-				camera = "21%2BMP%2B&%2BAbove"
-
-			self.req['camera'] = camera
-		except (KeyError,ValueError):
-			pass
-		"""
 
 		
 		#Fixing camera

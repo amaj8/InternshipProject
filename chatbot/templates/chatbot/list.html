@@ -6,59 +6,58 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name="description" content="" />
     <meta name="keywords" content="" />
-
-      <script src="{% static 'js/jquery.min.js' %}"></script>
-    <script src="{% static 'js/jquery.dropotron.min.js' %}"></script>
-    <script src="{% static 'js/skel.min.js' %}"></script>
-    <script src="{% static 'js/skel-layers.min.js' %}"></script>
-    <script src="{% static 'js/init.js' %}"></script>
-
-			<link rel="stylesheet" href="{% static 'css/style.css' %}" />
-			<link rel="stylesheet" href="{% static 'css/style-wide.css' %}" />
-			<link rel="stylesheet" href="{% static 'css/skel.css' %}" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+      <link rel="stylesheet" href="{% static 'css/style_list.css' %}" />
 
    </head>
-  <body>
-
-    <!-- Wrapper -->
-{#    <div class="wrapper style1">#}
-
-              <!-- Banner -->
-          <div id="banner" class="container">
-            <section>
-              <p>Check out these phones!</p>
-            </section>
-          </div>
-
-        <!-- Extra -->
-{#          <div id="extra">#}
-{#            <div class="container">#}
-              {% for  item in item_list %}
-                  <div class="row no-collapse-1">
-                    <section class="4u"> <a href="#" class="image featured"><img src="{{item.img}}" alt="{{item.name}}"></a>
-                      <div class="box">
-                          <ul>
-                            {% for spec in item.spec %}
-                              <li>{{spec}}</li>
-                            {% endfor %}
-                          </ul>
-                          <a href="{{item.url}}" class="button">Take me there</a>
-                      </div>
-
-                    </section>
-                  {% if forloop.counter|divisibleby:3 %}
-                      </div>
-
-{#                      <div class="row no-collapse-1">#}
-                  {% endif %}
-              {% endfor %}
-{#              </div>#}
-
-{#            </div>#}
-{#          </div>#}
-
-
+  <body bgcolor="#fff8dc">
+{#  <div style="background-color: turquoise">#}
+{#      <h2 align="center">#}
+        <div class="panel-primary">
+            <div class="panel-heading">
+                <p class="h3" align="center">
+                  Check out these phones!
+                </p>
+            </div>
+            <h3>
+                <a href="{% url 'chatbot:run_script' %}" style="float: right ">Go back to Chatbot</a>
+            </h3>
+        </div>
+{#      </h2>#}
 {#  </div>#}
+<div class="panel-body">
+    {% for  item in item_list %}
+{#        <div class="boxed">#}
 
+            <div class="col-sm-4 col-lg-3">
+                <div class="box">
+                <div class="thumbnail">
+                    <div class="caption">
+                        <a href="#" class="image featured">
+                            <img class="my-img" src="{{item.img}}" alt="{{item.name}}">
+                        </a>
+                    </div>
+                </div>
+
+                  <ul style="color:black">
+                        {% for spec in item.spec %}
+                          <li>{{spec}}</li>
+                        {% endfor %}
+                  </ul>
+                  <a href="{{item.url}}" class="button">
+                      Take me there
+                  </a>
+                </div>
+            </div>
+        {% empty %}
+            <h3>
+                No phones to show :(
+            </h3>
+    {% endfor %}
+</div>
   </body>
 </html>
+
+

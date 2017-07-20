@@ -9,5 +9,5 @@ from . import views
 
 urlpatterns = [
     url(r'^$', run_script, name='run_script'),
-        url(r'^final_response/$', views.final_response, name='final_response'),
+    url(r'^final_response/$', views.final_response, name='final_response'),
 ]
