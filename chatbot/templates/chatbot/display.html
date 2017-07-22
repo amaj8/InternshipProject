@@ -131,9 +131,10 @@
         var span = document.createElement('span')
         span.setAttribute('class','chat-img pull-right')
         var img = document.createElement('img')
-        img.src = "http://placehold.it/50/FA6F57/fff&amp;text=ME"
+        img.src = "{% static 'images/user.png' %}"
         img.setAttribute('alt','User Avatar')
         img.setAttribute('class','img-circle')
+        img.setAttribute('style','width:50px;height:50px;')
         var div = document.createElement('div')
         div.setAttribute('class',"pull-right chat-body clearfix")
         div.id = 'user'
@@ -165,9 +166,10 @@
         var ch_span = document.createElement('span')
         ch_span.setAttribute('class','chat-img pull-left')
         var ch_img = document.createElement('img')
-        ch_img.src = "http://placehold.it/50/55C1E7/fff&amp;text=U"
+        ch_img.src = "{% static 'images/eva-chatbot.png' %}"
         ch_img.setAttribute('alt','Chatbot Avatar')
         ch_img.setAttribute('class','img-circle')
+        ch_img.setAttribute('style','width:50px;height:50px;')
         var ch_div = document.createElement('div')
         ch_div.setAttribute('class',"chat-body clearfix")
         ch_div.id = 'chatbot'

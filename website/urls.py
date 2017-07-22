@@ -20,5 +20,5 @@ from django.conf.urls import include, url
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^chatbot/', include("chatbot.urls", namespace="chatbot"))
+    url(r'^', include("chatbot.urls", namespace="chatbot"))
 ]
