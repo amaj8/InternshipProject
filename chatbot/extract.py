@@ -233,8 +233,8 @@ class Flip:
 		#return url
 
 		#Running Chrome headless using xvfb and pyvirtualdisplay
-		display = Display(visible=0, size=(800, 600))
-		display.start()
+		#display = Display(visible=0, size=(800, 600))
+		#display.start()
 		driver = webdriver.Chrome()
 
 
