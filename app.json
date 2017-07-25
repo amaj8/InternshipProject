@@ -2,11 +2,12 @@
   "name": "Shopping Assistant Chatbot",
   "repository": "https://github.com/amaj8/InternshipProject",
   
+  "stack": "cedar-14",
   "environments": {
     "test": {
       "buildpacks": [
-        { "url": "heroku/nodejs" },
-        { "url": "https://github.com/heroku/heroku-buildpack-google-chrome" }
+        { "url": "heroku/ruby" },
+        { "url": "https://github.com/heroku/heroku-buildpack-xvfb-google-chrome" }
       ]
     }
   }
