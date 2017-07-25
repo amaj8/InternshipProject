@@ -4,6 +4,12 @@ from selenium import webdriver
 from bs4 import BeautifulSoup as bs
 import html5lib
 
+from selenium.webdriver.common.keys import Keys  
+from selenium.webdriver.chrome.options import Options
+
+chrome_options = Options()  
+chrome_options.add_argument("--headless")  
+
 #filter strings to be used in Flipkart's url
 
 
@@ -233,9 +239,9 @@ class Flip:
 		#return url
 
 		#Running Chrome headless using xvfb and pyvirtualdisplay
-		display = Display(visible=0, size=(800, 600))
-		display.start()
-		driver = webdriver.Chrome()
+		#display = Display(visible=0, size=(800, 600))
+		#display.start()
+		driver = webdriver.Chrome(chrome_options=chrome_options)
 
 
 		driver.get(url)
