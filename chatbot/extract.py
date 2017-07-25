@@ -11,6 +11,7 @@ from selenium.webdriver.chrome.options import Options
 chrome_options = Options()  
 chrome_options.add_argument("--headless")  
 """
+"""
 GOOGLE_CHROME_BIN = '/app/.apt/usr/bin/google-chrome'
 CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
 chrome_options = Options()
@@ -18,7 +19,7 @@ chrome_options.binary_location = GOOGLE_CHROME_BIN
 chrome_options.add_argument('--disable-gpu')
 chrome_options.add_argument('--no-sandbox')
 driver = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
-
+"""
 #filter strings to be used in Flipkart's url
 
 
@@ -250,7 +251,7 @@ class Flip:
 		#Running Chrome headless using xvfb and pyvirtualdisplay
 		display = Display(visible=0, size=(800, 600))
 		display.start()
-		driver = webdriver.Chrome(chrome_options=chrome_options)
+		driver = webdriver.Chrome()
 
 
 		driver.get(url)
