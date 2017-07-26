@@ -1,0 +1,39 @@
+{% extends 'base2.html' %}
+
+{% block content %}
+<div class="logina">
+
+    <br><br><br>
+    <h2>Log In To Chatbot</h2>
+
+    {% if form.errors %}
+    <p style="color: red">Your username and password didn't match. Please try again.</p>
+    {% endif %}              <br/>
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}" />
+        {% for field in form %}
+        <p>
+            {{ field.label_tag }}<br>
+            {{ field }}<br>
+            {% for error in field.errors %}
+        <p style="color: red">{{ error }}</p>
+        {% endfor %}
+        {% if field.help_text %}
+        <p><small style="color: grey">{{ field.help_text }}</small></p>
+        {% endif %}
+        </p>
+        {% endfor %}
+
+        <button type="submit" action="display.html">Log in</button><br/> <br/>
+
+
+        <br>
+        <a href="{% url 'signup' %}">New to Shopping Assistant Chatbot? <h1>Sign up</h1></a> <br/> <br/>
+
+    </form>
+</div>
+
+
+{% endblock %}
