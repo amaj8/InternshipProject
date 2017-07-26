@@ -294,7 +294,7 @@ class Flip:
 			#print "Oops! No results were found"
 			pass
 
-		#print item_list
+		print item_list
 		self.item_list = item_list
 		return item_list
 
