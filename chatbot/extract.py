@@ -38,7 +38,7 @@ class Flip:
 		#Append units i.e. GB to ram size if it's given in the user requirements
 		try:
 			if self.req['ram']:
-				self.req['ram'] += '%2BGB'
+				self.req['ram'] += '+GB'
 		except KeyError:
 			pass
 
